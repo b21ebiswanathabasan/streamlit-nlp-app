@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Set page config (optional)
-st.set_page_config(page_title="Rich UI App", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="Data Management Bot", page_icon="🤖", layout="centered")
 
 # Title of the main app
 st.title("Interactive NLP & Profile Tool")
@@ -44,8 +44,8 @@ elif st.session_state.page == "nlp":
     if st.button("Submit"):
         if user_input.strip():
             # Call N8N webhook with the user's input
-            webhook_url = "https://YOUR_N8N_WEBHOOK_URL"  # Replace with actual N8N webhook
-            payload = {"query": user_input}
+            webhook_url = "https://dmgmt.app.n8n.cloud/webhook-test/chat-agent"  # Replace with actual N8N webhook
+            payload = {"text": user_input}
             try:
                 response = requests.post(webhook_url, json=payload)
                 if response.status_code == 200:
