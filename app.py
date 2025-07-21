@@ -24,7 +24,7 @@ def go_to_all_profiles():
 if st.session_state.page == "home":
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("1️⃣ Chat using Natural Language"):
+        if st.button("1️⃣ Chat using NLP"):
             go_to_nlp()
     with col2:
         if st.button("2️⃣ Run a Profile"):
@@ -35,7 +35,7 @@ if st.session_state.page == "home":
 
 # NLP chat page
 elif st.session_state.page == "nlp":
-    st.header("🗨️ Chat using Natural Language")
+    st.header("🗨️ Chat using NLP")
     user_input = st.text_area("Enter your query in natural language:")
 
     if st.button("Submit"):
@@ -47,23 +47,25 @@ elif st.session_state.page == "nlp":
                 response = requests.post(webhook_url, json=payload)
                 if response.status_code == 200:
                     st.success("✅ NLP query sent successfully!")
+
                     data = response.json()
 
-                    # Attempt to format response nicely
-                    st.markdown("### 📋 Parsed Response")
+                    # 🧾 Show heading for parsed response
+                    st.markdown("### 📋 Your Response")
+
+                    # 🎯 Nicely format the response
                     if isinstance(data, dict):
                         for key, value in data.items():
                             st.markdown(f"**{key}:** {value}")
                     elif isinstance(data, list):
                         for i, item in enumerate(data):
-                            st.markdown(f"**Item {i+1}:**")
                             if isinstance(item, dict):
                                 for k, v in item.items():
                                     st.markdown(f"- **{k}**: {v}")
                             else:
                                 st.markdown(f"- {item}")
                     else:
-                        st.markdown(f"**Response:** {data}")
+                        st.markdown(f"{data}")
                 else:
                     st.error(f"❌ Error from webhook: {response.status_code}")
             except Exception as e:
@@ -73,6 +75,7 @@ elif st.session_state.page == "nlp":
 
     if st.button("🔙 Back to Home"):
         st.session_state.page = "home"
+
 
 # Run Profile page
 elif st.session_state.page == "run_profile":
