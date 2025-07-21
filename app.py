@@ -1,20 +1,16 @@
 import streamlit as st
 import requests
 
-# Set page config (optional)
-st.set_page_config(page_title="Data Management Bot", page_icon="🤖", layout="centered")
+# Set page config
+st.set_page_config(page_title="Data Management App", page_icon="🤖", layout="centered")
 
-# Title of the main app
 st.title("Interactive NLP & Profile Tool")
-
-# Create three buttons on main page
 st.subheader("Choose an action:")
 
-# Define navigation-like behavior using session state
+# Page state logic
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-# Callback functions to change pages
 def go_to_nlp():
     st.session_state.page = "nlp"
 
@@ -24,11 +20,11 @@ def go_to_run_profile():
 def go_to_all_profiles():
     st.session_state.page = "all_profiles"
 
-# Display buttons
+# Home page buttons
 if st.session_state.page == "home":
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("1️⃣ Chat with NLP"):
+        if st.button("1️⃣ Chat using Natural Language"):
             go_to_nlp()
     with col2:
         if st.button("2️⃣ Run a Profile"):
@@ -37,20 +33,37 @@ if st.session_state.page == "home":
         if st.button("3️⃣ Get all Profile Details"):
             go_to_all_profiles()
 
-# Page 1: Chat with NLP
+# NLP chat page
 elif st.session_state.page == "nlp":
-    st.header("🗨️ Chat with NLP")
+    st.header("🗨️ Chat using Natural Language")
     user_input = st.text_area("Enter your query in natural language:")
+
     if st.button("Submit"):
         if user_input.strip():
-            # Call N8N webhook with the user's input
             webhook_url = "https://dmgmt.app.n8n.cloud/webhook-test/chat-agent"  # Replace with actual N8N webhook
             payload = {"text": user_input}
+
             try:
                 response = requests.post(webhook_url, json=payload)
                 if response.status_code == 200:
                     st.success("✅ NLP query sent successfully!")
-                    st.json(response.json())  # Show the response from N8N
+                    data = response.json()
+
+                    # Attempt to format response nicely
+                    st.markdown("### 📋 Parsed Response")
+                    if isinstance(data, dict):
+                        for key, value in data.items():
+                            st.markdown(f"**{key}:** {value}")
+                    elif isinstance(data, list):
+                        for i, item in enumerate(data):
+                            st.markdown(f"**Item {i+1}:**")
+                            if isinstance(item, dict):
+                                for k, v in item.items():
+                                    st.markdown(f"- **{k}**: {v}")
+                            else:
+                                st.markdown(f"- {item}")
+                    else:
+                        st.markdown(f"**Response:** {data}")
                 else:
                     st.error(f"❌ Error from webhook: {response.status_code}")
             except Exception as e:
@@ -58,18 +71,17 @@ elif st.session_state.page == "nlp":
         else:
             st.warning("Please enter a query before submitting.")
 
-    # Back to home
     if st.button("🔙 Back to Home"):
         st.session_state.page = "home"
 
-# Page 2: Run a Profile
+# Run Profile page
 elif st.session_state.page == "run_profile":
     st.header("⚙️ Run a Profile")
     st.info("This section can be extended to trigger profile execution logic.")
     if st.button("🔙 Back to Home"):
         st.session_state.page = "home"
 
-# Page 3: Get all Profile Details
+# All Profiles page
 elif st.session_state.page == "all_profiles":
     st.header("📂 Get All Profile Details")
     st.info("This section can be extended to fetch and display profile data.")
