@@ -40,7 +40,7 @@ elif st.session_state.page == "nlp":
 
     if st.button("Submit"):
         if user_input.strip():
-            webhook_url = "https://dmgmt.app.n8n.cloud/webhook-test/chat-agent"  # Replace with actual N8N webhook
+            webhook_url = "https://dmgmt.app.n8n.cloud/webhook/chat-agent"  # Replace with actual N8N webhook
             payload = {"text": user_input}
 
             try:
